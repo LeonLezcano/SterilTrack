@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isHospitalStaff() {
+      return isAuthenticated() && (
+        request.auth.token.role in ['ADMIN', 'SUPERVISOR', 'INSTRUMENTADOR', 'TECNICO_ESTERILIZACION']
+      );
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.role == 'ADMIN';
+    }
+
+    // Cajas Quirúrgicas
+    match /surgicalTrays/{trayId} {
+      allow read: if isAuthenticated();
+      allow create: if isHospitalStaff();
+      allow update: if isHospitalStaff();
+      allow delete: if isAdmin();
+    }
+
+    // Ciclos de Autoclave y Validación Biológica
+    match /autoclaveCycles/{cycleId} {
+      allow read: if isAuthenticated();
+      allow create: if isHospitalStaff();
+      allow update: if isHospitalStaff();
+      allow delete: if isAdmin();
+    }
+
+    // Actas de Consumo Quirúrgico ANMAT
+    match /implantConsumptions/{consumptionId} {
+      allow read: if isAuthenticated();
+      allow create: if isHospitalStaff();
+      allow update: if isHospitalStaff();
+      allow delete: if isAdmin();
+    }
+
+    // Partes Quirúrgicos y Split Billing
+    match /surgicalCases/{caseId} {
+      allow read: if isAuthenticated();
+      allow create: if isHospitalStaff();
+      allow update: if isHospitalStaff();
+      allow delete: if isAdmin();
+    }
+
+    // Bloqueo total por defecto
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

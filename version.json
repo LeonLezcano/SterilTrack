@@ -1,0 +1,14 @@
+{
+  "version": "v1.0.00",
+  "build": "20261116.1",
+  "releaseDate": "2026-11-16",
+  "environment": "production",
+  "cacheName": "steriltrack-cache-v1.0.00",
+  "features": [
+    "Surgical Tray Lifecycle State Machine (#120/#170)",
+    "Autoclave Physical & Biological Gate (#307/#115)",
+    "ANMAT Implant Consumption & Traceability (#130/#141)",
+    "Split-Billing ART/OS Ledger Engine (#134)",
+    "Cryptographic SHA-256 Sterilization Seal (#159/#245)"
+  ]
+}

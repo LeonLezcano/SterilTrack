@@ -1,0 +1,25 @@
+{
+  "name": "steriltrack",
+  "version": "1.0.00",
+  "description": "SterilTrack — Centrales de Esterilización Hospitalaria, Trazabilidad de Cajas Quirúrgicas & Consumo de Implantes ANMAT",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/run_tests.js",
+    "test:security": "node ../AiAppFactory/tools/security-guardian/index.mjs .",
+    "security:full": "node ../AiAppFactory/tools/security-guardian/index.mjs . --abuse",
+    "version:bump": "node -e \"import('fs').then(fs => { const v = JSON.parse(fs.readFileSync('version.json')); const [maj, min, patch] = v.version.replace('v', '').split('.').map(Number); const nextPatch = String(patch + 1).padStart(2, '0'); v.version = 'v' + maj + '.' + min + '.' + nextPatch; v.build = new Date().toISOString().slice(0, 10).replace(/-/g, '') + '.1'; v.releaseDate = new Date().toISOString().slice(0, 10); v.cacheName = 'steriltrack-cache-' + v.version; fs.writeFileSync('version.json', JSON.stringify(v, null, 2)); console.log('Bumped to ' + v.version); })\""
+  },
+  "keywords": [
+    "esterilizacion",
+    "cajas-quirurgicas",
+    "anmat",
+    "implantes",
+    "autoclave",
+    "bioseguridad",
+    "osteosintesis",
+    "offline-first",
+    "pwa"
+  ],
+  "author": "AiAppFactory / LeonLezcano",
+  "license": "PROPRIETARY"
+}
