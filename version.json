@@ -1,9 +1,9 @@
 {
-  "version": "v1.0.00",
-  "build": "20261116.1",
-  "releaseDate": "2026-11-16",
+  "version": "v1.0.01",
+  "build": "20261117.1",
+  "releaseDate": "2026-11-17",
   "environment": "production",
-  "cacheName": "steriltrack-cache-v1.0.00",
+  "cacheName": "steriltrack-cache-v1.0.01",
   "features": [
     "Surgical Tray Lifecycle State Machine (#120/#170)",
     "Autoclave Physical & Biological Gate (#307/#115)",

@@ -1,0 +1,19 @@
+{
+  "name": "SterilTrack - Trazabilidad Quirurgica ANMAT",
+  "short_name": "SterilTrack",
+  "description": "Centrales de Esterilizacion Hospitalaria, Control de Autoclaves y Consumo de Implantes ANMAT Offline-First.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f7f8",
+  "theme_color": "#0f172a",
+  "lang": "es-AR",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

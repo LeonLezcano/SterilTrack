@@ -15,6 +15,7 @@ import { SterilTrackCache } from '../src/services/sterilTrackCache.service.js';
 import { computeSHA256, sealSterilizationProtocol } from '../src/utils/cryptoSeal.js';
 import { formatCurrency, formatDateTime, formatDate } from '../src/utils/formatters.js';
 import { Sanitizer } from '../src/utils/sanitizer.js';
+import { state, seedDemoData, purgeDemoData, ensureProtocolSeals } from '../src/app.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -277,9 +278,37 @@ async function runAllTests() {
   assert(headerKeys.includes('content-security-policy'), 'firebase.json define Content-Security-Policy (CSP)', 'SEC');
   assert(headerKeys.includes('x-frame-options') && headerKeys.includes('x-content-type-options'), 'firebase.json define X-Frame-Options y X-Content-Type-Options', 'SEC');
 
-  const swEntry = allHeaders.find((h) => h.source === 'sw.js');
+  const swEntry = allHeaders.find((h) => h.source === '/sw.js' || h.source === 'sw.js');
   const swCacheControl = swEntry?.headers?.find((h) => h.key.toLowerCase() === 'cache-control')?.value || '';
-  assert(swCacheControl.includes('no-cache'), 'firebase.json define Cache-Control no-cache para el Service Worker', 'SEC');
+  assert(swCacheControl.includes('no-cache'), 'firebase.json define Cache-Control no-cache para /sw.js', 'SEC');
+
+  const cspHeader = globalHeaderObj.find((h) => h.key.toLowerCase() === 'content-security-policy')?.value || '';
+  assert(!cspHeader.includes('cdn.tailwindcss.com') && !cspHeader.includes("'unsafe-inline'"), 'CSP en firebase.json elimina cdn.tailwindcss.com y unsafe-inline', 'SEC');
+
+  // 3. Verificación PWA Offline-First, DESIGN.md y Remediación UI
+  const indexHtml = fs.readFileSync(path.join(projectRoot, 'index.html'), 'utf-8');
+  const appJs = fs.readFileSync(path.join(projectRoot, 'src', 'app.js'), 'utf-8');
+  const swJs = fs.readFileSync(path.join(projectRoot, 'sw.js'), 'utf-8');
+
+  assert(!indexHtml.includes('cdn.tailwindcss.com') && indexHtml.includes('./styles.css'), 'index.html carga styles.css local sin CDN externo', 'SEC');
+  assert(indexHtml.includes('href="./manifest.json"'), 'index.html vincula rel="manifest" a ./manifest.json', 'SEC');
+  assert(fs.existsSync(path.join(projectRoot, 'manifest.json')) && fs.existsSync(path.join(projectRoot, 'styles.css')) && fs.existsSync(path.join(projectRoot, 'DESIGN.md')), 'Existen manifest.json, styles.css compilado y DESIGN.md', 'SEC');
+  assert(swJs.includes('./styles.css') && swJs.includes('isNetworkFirstRequest'), 'sw.js precachea styles.css y usa Network-First para HTML/version.json', 'SEC');
+  assert(!indexHtml.includes('\u2014') && !appJs.includes('\u2014'), 'Sin guiones largos (em dash) en UI de index.html y src/app.js', 'SEC');
+  assert(!appJs.includes('alert('), 'src/app.js reemplaza window.alert() por feedback inline accesible', 'SEC');
+  assert(appJs.includes('role="tablist"') && appJs.includes('role="tab"') && appJs.includes('aria-selected'), 'src/app.js implementa semántica ARIA tablist/tab/aria-selected', 'SEC');
+
+  // 4. Guardia steriltrack_demo_purged y sellado SHA-256 en app.js
+  SterilTrackCache.clear();
+  seedDemoData();
+  assert(state.trays.length === 1 && state.trays[0].isDemo === true, 'seedDemoData marca registros demo con isDemo: true', 'INTEGRATION');
+  await ensureProtocolSeals();
+  assert(state.cycles[0]?.cryptoSeal?.sealHash?.length === 64, 'ensureProtocolSeals sella ciclo demo con hash SHA-256 real de 64 hex', 'INTEGRATION');
+  purgeDemoData();
+  assert(state.trays.length === 0 && SterilTrackCache.get('demo_purged') === true, 'purgeDemoData vacía estado y activa bandera demo_purged', 'INTEGRATION');
+  seedDemoData();
+  assert(state.trays.length === 0, 'seedDemoData respeta demo_purged y no resiembra datos fantasma', 'INTEGRATION');
+  SterilTrackCache.clear();
 
   // ==========================================
   // CAPA 5: FLUJO E2E Y CASO DE USO COMPLETO (6 Tests)

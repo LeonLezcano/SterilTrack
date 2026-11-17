@@ -1,8 +1,8 @@
-# 🔬 SterilTrack — Centrales de Esterilización Hospitalaria, Trazabilidad de Cajas Quirúrgicas & Consumo de Implantes ANMAT
+# SterilTrack - Centrales de Esterilización Hospitalaria, Trazabilidad de Cajas Quirúrgicas & Consumo de Implantes ANMAT
 
 > **Vertical:** Centrales de Esterilización Hospitalaria, Autoclaves & Ortopedias Quirúrgicas (Cajas de Implantes en Préstamo ANMAT)  
-> **Arquetipo:** Patrón B/C — Loaner Surgical Tray Lifecycle, ANMAT Implant Consumption Audit & Autoclave Biological Cycle Gate  
-> **Versión:** `v1.0.00` &bull; **AiAppFactory Standard**
+> **Arquetipo:** Patrón B/C - Loaner Surgical Tray Lifecycle, ANMAT Implant Consumption Audit & Autoclave Biological Cycle Gate  
+> **Versión:** `v1.0.01` &bull; **AiAppFactory Standard** | Ver [DESIGN.md](./DESIGN.md)
 
 ---
 
@@ -29,11 +29,11 @@
 
 ---
 
-## 🧪 3. Arnés de Pruebas Multi-Capa (52 Tests 100% PASS)
+## 🧪 3. Arnés de Pruebas Multi-Capa (64 Tests)
 
 ```bash
 # Ejecución de pruebas
-node tests/run_tests.js
+pnpm test
 ```
 
 - **Capa 1 (Unitarias & Fuzzing):** Sanitización XSS, formateo monetario y fuzzing caótico sobre parámetros de autoclave.
@@ -53,3 +53,12 @@ node ../AiAppFactory/tools/security-guardian/index.mjs . --abuse
 - **Puntaje:** **100/100 Puntos**
 - **Vulnerabilidades:** 0 Críticas | 0 Altas | 0 Medias | 0 Bajas
 - **Resistencia a Abusos (Capa 7):** Rate limiting activo, protección contra saturación de payloads (Memory Flood) y defensa Strix DAST/SSRF.
+
+---
+
+## 🎨 5. Remediación UX/UI, Accesibilidad y Offline-First (`v1.0.01`)
+
+- **Sistema de Diseño (`DESIGN.md`):** Jerarquía tipográfica descendente (`h1` > `h2` > `h3` > `body`), tarjetas planas con divisores internos, iconos SVG monocromáticos (sin emojis decorativos en UI) y contraste WCAG AA.
+- **Accesibilidad & Móvil:** Navegación `tablist`/`tab` con `aria-selected` y soporte de teclado, `:focus-visible`, áreas táctiles >= 44px, estados vacíos/carga/error inline (sin `window.alert()`), `@media (prefers-reduced-motion: reduce)` y `@media print`.
+- **Offline-First Real & CSP Estricta:** CSS de Tailwind compilado localmente en `styles.css` (sin `cdn.tailwindcss.com` ni `'unsafe-inline'`), `manifest.json` dedicado, cabecera `Cache-Control: no-cache` para `/sw.js` y estrategia Network-First en `sw.js` para HTML y `version.json`.
+- **Transparencia Demo/Mock y SHA-256:** Guardia `steriltrack_demo_purged`, etiquetas explícitas `[DEMO]`/`[MOCK]` con botón de limpieza/recarga, sellado real Web Crypto SHA-256 conectado en ciclos y actas ANMAT. Almacenamiento actual 100% local Offline-First (sin sincronización remota activa en la UI).

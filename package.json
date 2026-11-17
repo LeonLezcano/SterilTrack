@@ -1,7 +1,7 @@
 {
   "name": "steriltrack",
-  "version": "1.0.00",
-  "description": "SterilTrack — Centrales de Esterilización Hospitalaria, Trazabilidad de Cajas Quirúrgicas & Consumo de Implantes ANMAT",
+  "version": "1.0.01",
+  "description": "SterilTrack - Centrales de Esterilización Hospitalaria, Trazabilidad de Cajas Quirúrgicas & Consumo de Implantes ANMAT",
   "type": "module",
   "scripts": {
     "test": "node tests/run_tests.js",
